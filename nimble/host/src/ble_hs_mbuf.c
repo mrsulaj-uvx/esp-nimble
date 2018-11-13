@@ -66,7 +66,7 @@ ble_hs_mbuf_bare_pkt(void)
 struct os_mbuf *
 ble_hs_mbuf_acl_pkt(void)
 {
-    return ble_hs_mbuf_gen_pkt(BLE_HCI_DATA_HDR_SZ);
+    return ble_hs_mbuf_gen_pkt(BLE_HCI_DATA_HDR_SZ + 1);
 }
 
 /**
@@ -81,7 +81,7 @@ ble_hs_mbuf_acl_pkt(void)
 struct os_mbuf *
 ble_hs_mbuf_l2cap_pkt(void)
 {
-    return ble_hs_mbuf_gen_pkt(BLE_HCI_DATA_HDR_SZ + BLE_L2CAP_HDR_SZ);
+    return ble_hs_mbuf_gen_pkt(BLE_HCI_DATA_HDR_SZ + BLE_L2CAP_HDR_SZ + 1);
 }
 
 struct os_mbuf *

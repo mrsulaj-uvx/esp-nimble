@@ -46,6 +46,8 @@ static int32_t adv_int_min =  ADV_INT_DEFAULT_MS;
 #if MYNEWT
 OS_TASK_STACK_DEFINE(g_blemesh_stack, MYNEWT_VAL(BLE_MESH_ADV_STACK_SIZE));
 struct os_task adv_task;
+#else
+static TaskHandle_t adv_task_h;
 #endif
 
 static struct ble_npl_eventq adv_queue;
@@ -332,6 +334,9 @@ void bt_mesh_adv_init(void)
 	os_task_init(&adv_task, "mesh_adv", mesh_adv_thread, NULL,
 	             MYNEWT_VAL(BLE_MESH_ADV_TASK_PRIO), OS_WAIT_FOREVER,
 	             g_blemesh_stack, MYNEWT_VAL(BLE_MESH_ADV_STACK_SIZE));
+#else
+    	xTaskCreate(mesh_adv_thread, "mesh_adv", 2768,
+            NULL, (configMAX_PRIORITIES - 4), &adv_task_h);
 #endif
 
 	/* For BT5 controllers we can have fast advertising interval */
