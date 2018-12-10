@@ -5,6 +5,10 @@
 #ifndef H_MYNEWT_SYSCFG_
 #define H_MYNEWT_SYSCFG_
 
+#ifdef ESP_PLATFORM
+#include "esp_nimble_cfg.h"
+#else
+
 /**
  * This macro exists to ensure code includes this header when needed.  If code
  * checks the existence of a setting directly via ifdef without including this
@@ -55,7 +59,7 @@
 #endif
 
 #ifndef MYNEWT_VAL_MSYS_1_BLOCK_COUNT
-#define MYNEWT_VAL_MSYS_1_BLOCK_COUNT (12)
+#define MYNEWT_VAL_MSYS_1_BLOCK_COUNT (20)
 #endif
 
 #ifndef MYNEWT_VAL_MSYS_1_BLOCK_SIZE
@@ -374,7 +378,7 @@
 #endif
 
 #ifndef MYNEWT_VAL_BLE_MAX_CONNECTIONS
-#define MYNEWT_VAL_BLE_MAX_CONNECTIONS (2)
+#define MYNEWT_VAL_BLE_MAX_CONNECTIONS (4)
 #endif
 
 #ifndef MYNEWT_VAL_BLE_MAX_PERIODIC_SYNCS
@@ -1411,7 +1415,7 @@
 #endif
 
 #ifndef MYNEWT_VAL_BLE_HCI_EVT_HI_BUF_COUNT
-#define MYNEWT_VAL_BLE_HCI_EVT_HI_BUF_COUNT (8)
+#define MYNEWT_VAL_BLE_HCI_EVT_HI_BUF_COUNT (30)
 #endif
 
 #ifndef MYNEWT_VAL_BLE_HCI_EVT_LO_BUF_COUNT
@@ -1486,5 +1490,5 @@
 #ifndef MYNEWT_VAL_TARGET_porting_default
 #define MYNEWT_VAL_TARGET_porting_default (1)
 #endif
-
+#endif
 #endif
