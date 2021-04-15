@@ -53,11 +53,6 @@ nimble_port_init(void)
     os_cputime_init(32768);
     ble_ll_init();
 #endif
-
-#ifdef ESP_PLATFORM
-    esp_log_level_set("NimBLE", LOG_LOCAL_LEVEL);
-#endif
-
 }
 
 void
