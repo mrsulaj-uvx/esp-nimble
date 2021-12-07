@@ -114,7 +114,9 @@ struct ble_gap_connect_reattempt_ctxt {
 };
 
 static struct ble_gap_connect_reattempt_ctxt ble_conn_reattempt[MYNEWT_VAL(BLE_MAX_CONNECTIONS)];
+#if !MYNEWT_VAL(BLE_EXT_ADV)
 static uint16_t reattempt_idx;
+#endif
 static bool conn_cookie_enabled;
 #endif
 
@@ -3866,7 +3868,7 @@ ble_gap_periodic_adv_stop(uint8_t instance)
     return rc;
 }
 
-static void
+void
 ble_gap_npl_sync_lost(struct ble_npl_event *ev)
 {
     struct ble_hs_periodic_sync *psync;
@@ -4920,8 +4922,7 @@ ble_gap_check_conn_params(uint8_t phy, const struct ble_gap_conn_params *params)
     }
 
     /* Check connection latency */
-    if ((params->latency < BLE_HCI_CONN_LATENCY_MIN) ||
-        (params->latency > BLE_HCI_CONN_LATENCY_MAX)) {
+    if (params->latency > BLE_HCI_CONN_LATENCY_MAX) {
         return BLE_ERR_INV_HCI_CMD_PARMS;
     }
 
