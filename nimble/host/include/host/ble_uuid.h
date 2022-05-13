@@ -130,15 +130,6 @@ typedef union {
         .value = (uuid32),              \
     }
 
-/**
- * @brief Macro for initializing a 128-bit UUID.
- *
- * This macro initializes a 128-bit UUID with the provided value.
- *
- * @param uuid128   The value of the 128-bit UUID.
- *
- * @return          The initialized 128-bit UUID structure.
- */
 #define BLE_UUID128_INIT(uuid128 ...)   \
     {                                   \
         .u = {                          \
