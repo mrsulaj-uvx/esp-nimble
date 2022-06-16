@@ -38,11 +38,7 @@
 #endif
 #endif
 
-#ifdef CONFIG_BT_LE_HCI_INTERFACE_USE_UART
-#include "transport/uart/ble_hci_uart.h"
-#else
-#include "transport/ram/ble_hci_ram.h"
-#endif
+
 #include "nimble/ble_hci_trans.h"
 
 #include "esp_intr_alloc.h"
@@ -89,9 +85,6 @@ nimble_port_init(void)
     ble_npl_eventq_init(&g_eventq_dflt);
 
     void ble_store_ram_init(void);
-#if NIMBLE_CFG_CONTROLLER
-    void ble_hci_ram_init(void);
-#endif
 
     os_msys_init();
 
