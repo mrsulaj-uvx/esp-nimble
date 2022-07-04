@@ -90,7 +90,7 @@ esp_err_t esp_nimble_init(void)
 
     npl_freertos_mempool_init();
 
-#if true //need delete esp_nimble_hci_and_controller_init then can be use
+#if false //need delete esp_nimble_hci_and_controller_init then can be use
     if(esp_nimble_hci_init() != ESP_OK) {
         ESP_LOGE(NIMBLE_PORT_LOG_TAG, "hci inits failed\n");
         return ESP_FAIL;
@@ -120,7 +120,7 @@ esp_err_t esp_nimble_init(void)
  */
 esp_err_t esp_nimble_deinit(void)
 {
-#if !SOC_ESP_NIMBLE_CONTROLLER //need delete esp_nimble_hci_and_controller_init then can be use
+#if false && !SOC_ESP_NIMBLE_CONTROLLER //need delete esp_nimble_hci_and_controller_init then can be use
     if(esp_nimble_hci_deinit() != ESP_OK) {
         ESP_LOGE(NIMBLE_PORT_LOG_TAG, "hci deinit failed\n");
         return ESP_FAIL;
@@ -136,7 +136,7 @@ esp_err_t esp_nimble_deinit(void)
 void
 nimble_port_init(void)
 {
-#if CONFIG_BT_CONTROLLER_ENABLED
+#if SOC_ESP_NIMBLE_CONTROLLER && CONFIG_BT_CONTROLLER_ENABLED
     esp_bt_controller_config_t config_opts = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
     if(esp_bt_controller_init(&config_opts) != ESP_OK) {
         ESP_LOGE(NIMBLE_PORT_LOG_TAG, "controller init failed\n");
