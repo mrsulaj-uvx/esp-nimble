@@ -6678,6 +6678,20 @@ ble_gap_end_test_evt(const void *buf, uint8_t len)
     ble_gap_event_listener_call(&event);
 }
 
+#if MYNEWT_VAL(BLE_HCI_VS)
+void
+ble_gap_vs_hci_event(const void *buf, uint8_t len)
+{
+    struct ble_gap_event event;
+
+    memset(&event, 0, sizeof event);
+    event.type = BLE_GAP_EVENT_VS_HCI;
+    event.vs_hci.ev = buf;
+    event.vs_hci.length = len;
+
+    ble_gap_event_listener_call(&event);
+}
+#endif
 
 /*****************************************************************************
  * $preempt                                                                  *

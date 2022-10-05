@@ -1130,6 +1130,19 @@ struct ble_gap_event {
 	     */
             uint8_t num_pkt;
 	} dtm_state;
+
+#if MYNEWT_VAL(BLE_HCI_VS)
+        /**
+         * Represents a received vendor-specific HCI event
+         *
+         * Valid for the following event types:
+         *     o BLE_GAP_EVENT_VS_HCI
+         */
+        struct {
+            const void *ev;
+            uint8_t length;
+        } vs_hci;
+#endif
     };
 };
 

@@ -64,6 +64,9 @@ static ble_hs_hci_evt_fn ble_hs_hci_evt_encrypt_change;
 static ble_hs_hci_evt_fn ble_hs_hci_evt_enc_key_refresh;
 #endif
 static ble_hs_hci_evt_fn ble_hs_hci_evt_le_meta;
+#if MYNEWT_VAL(BLE_HCI_VS)
+static ble_hs_hci_evt_fn ble_hs_hci_evt_vs;
+#endif
 
 static ble_hs_hci_evt_fn ble_hs_hci_evt_rx_test;
 static ble_hs_hci_evt_fn ble_hs_hci_evt_tx_test;
@@ -128,6 +131,9 @@ static const struct ble_hs_hci_evt_dispatch_entry ble_hs_hci_evt_dispatch[] = {
     { BLE_HCI_OCF_LE_TEST_END, ble_hs_hci_evt_end_test },
     { BLE_HCI_OCF_LE_RX_TEST_V2, ble_hs_hci_evt_rx_test },
     { BLE_HCI_OCF_LE_TX_TEST_V2, ble_hs_hci_evt_tx_test },
+#if MYNEWT_VAL(BLE_HCI_VS)
+    { BLE_HCI_EVCODE_VS, ble_hs_hci_evt_vs },
+#endif
 };
 
 #define BLE_HS_HCI_EVT_DISPATCH_SZ \
@@ -356,6 +362,22 @@ ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const void *data,
 
     return 0;
 }
+
+#if MYNEWT_VAL(BLE_HCI_VS)
+static int
+ble_hs_hci_evt_vs(uint8_t event_code, const void *data, unsigned int len)
+{
+    const struct ble_hci_ev_vs *ev = data;
+
+    if (len < sizeof(*ev)) {
+        return BLE_HS_ECONTROLLER;
+    }
+
+    ble_gap_vs_hci_event(data, len);
+
+    return 0;
+}
+#endif
 
 static int
 ble_hs_hci_evt_rx_test(uint8_t event_code, const void *data, unsigned int len)
