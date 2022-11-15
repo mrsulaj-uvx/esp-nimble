@@ -51,11 +51,11 @@
 #include "../store/config/src/ble_store_config_priv.h"
 
 #ifndef min
-#define min(a, b) ((a)<(b)?(a):(b))
+#define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 #ifndef max
-#define max(a, b) ((a)>(b)?(a):(b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
 #if NIMBLE_BLE_SM
