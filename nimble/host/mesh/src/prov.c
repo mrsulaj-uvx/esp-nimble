@@ -194,6 +194,15 @@ struct prov_rx {
 #define TRANSACTION_TIMEOUT  K_SECONDS(30)
 #define PROTOCOL_TIMEOUT     K_SECONDS(60)
 
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+#ifndef max
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif
+
+
 #if (MYNEWT_VAL(BLE_MESH_PB_GATT))
 #define PROV_BUF_HEADROOM 5
 #else

@@ -62,6 +62,14 @@ BUILD_ASSERT(CONFIG_BT_MESH_ADV_BUF_COUNT >= (CONFIG_BT_MESH_TX_SEG_MAX + 3));
 /* How long to wait for available buffers before giving up */
 #define BUF_TIMEOUT                 K_NO_WAIT
 
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+#ifndef max
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif
+
 static struct seg_tx {
 	struct bt_mesh_subnet   *sub;
 	struct os_mbuf          *seg[CONFIG_BT_MESH_TX_SEG_MAX];

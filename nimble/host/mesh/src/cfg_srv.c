@@ -35,6 +35,14 @@ static struct bt_mesh_cfg_srv *conf;
 
 static struct label labels[CONFIG_BT_MESH_LABEL_COUNT];
 
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+#ifndef max
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif
+
 static int comp_add_elem(struct os_mbuf *buf, struct bt_mesh_elem *elem,
 			 bool primary)
 {
