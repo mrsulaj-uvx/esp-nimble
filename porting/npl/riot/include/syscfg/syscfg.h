@@ -883,6 +883,14 @@
 #define MYNEWT_VAL_BLE_WHITELIST (1)
 #endif
 
+#ifndef MYNEWT_VAL_BLE_POWER_CONTROL
+#define MYNEWT_VAL_BLE_POWER_CONTROL (0)
+#endif
+
+#ifndef MYNEWT_VAL_BLE_GATT_BLOB_TRANSFER
+#define MYNEWT_VAL_BLE_GATT_BLOB_TRANSFER (0)
+#endif
+
 /*** @apache-mynewt-nimble/nimble/controller */
 #ifndef MYNEWT_VAL_BLE_CONTROLLER
 #define MYNEWT_VAL_BLE_CONTROLLER (1)
