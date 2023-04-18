@@ -64,6 +64,8 @@ extern "C" {
  *                       return appropriate error code otherwise
  */
 int ble_hs_pvcy_rpa_config(uint8_t enable);
+
+int ble_hs_pvcy_set_resolve_enabled(int enable);
 #endif
 
 #ifdef __cplusplus
