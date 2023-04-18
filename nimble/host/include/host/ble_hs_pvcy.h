@@ -66,6 +66,8 @@ extern "C" {
 int ble_hs_pvcy_rpa_config(uint8_t enable);
 
 void ble_hs_resolv_deinit(void);
+
+int ble_hs_pvcy_set_resolve_enabled(int enable);
 #endif
 
 #ifdef __cplusplus
