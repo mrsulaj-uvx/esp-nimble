@@ -1144,7 +1144,6 @@ struct ble_hci_le_subrate_req_cp {
     uint16_t conn_handle;
     uint16_t subrate_min;
     uint16_t subrate_max;
-    uint16_t max_latency;
     uint16_t cont_num;
     uint16_t supervision_tmo;
 } __attribute__((packed));
@@ -1265,8 +1264,6 @@ struct ble_hci_vs_set_antenna_cp {
 
 /*
  * Advertising filter policy
- *
- * Determines how an advertiser filters scan and connection requests.
  *
  *  NONE: no filtering (default value). No whitelist used.
  *  SCAN: process all connection requests but only scans from white list.
