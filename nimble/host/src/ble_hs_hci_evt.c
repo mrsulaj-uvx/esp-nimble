@@ -132,7 +132,7 @@ static const struct ble_hs_hci_evt_dispatch_entry ble_hs_hci_evt_dispatch[] = {
     { BLE_HCI_OCF_LE_RX_TEST_V2, ble_hs_hci_evt_rx_test },
     { BLE_HCI_OCF_LE_TX_TEST_V2, ble_hs_hci_evt_tx_test },
 #if MYNEWT_VAL(BLE_HCI_VS)
-    { BLE_HCI_EVCODE_VS, ble_hs_hci_evt_vs },
+    { BLE_HCI_EVCODE_VENDOR_DEBUG, ble_hs_hci_evt_vs },
 #endif
 };
 
@@ -367,7 +367,7 @@ ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const void *data,
 static int
 ble_hs_hci_evt_vs(uint8_t event_code, const void *data, unsigned int len)
 {
-    const struct ble_hci_ev_vs *ev = data;
+    const struct ble_hci_ev_vendor_debug *ev = data;
 
     if (len < sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
