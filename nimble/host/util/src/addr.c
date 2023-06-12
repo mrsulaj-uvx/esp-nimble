@@ -27,12 +27,10 @@
 static int
 ble_hs_util_load_rand_addr(ble_addr_t *addr)
 {
-    /* XXX: It is unfortunate that the function to retrieve the random address
-     * is in the controller package.  A host-only device ought to be able to
-     * automically restore a random address.
-     */
-#if MYNEWT_VAL(BLE_CONTROLLER)
-    int rc;
+    int rc = BLE_HS_ENOADDR;
+
+#if MYNEWT_VAL(BLE_HCI_VS)
+    struct ble_hci_vs_rd_static_addr_rp rsp;
 
     rc = ble_hw_get_static_addr(addr);
     if (rc == 0) {
@@ -40,7 +38,13 @@ ble_hs_util_load_rand_addr(ble_addr_t *addr)
     }
 #endif
 
-    return BLE_HS_ENOADDR;
+#if SOC_ESP_NIMBLE_CONTROLLER
+    rc = esp_ble_hw_get_static_addr((esp_ble_addr_t *)addr);
+    if (rc == 0) {
+        return 0;
+    }
+#endif
+    return rc;
 }
 
 static int
