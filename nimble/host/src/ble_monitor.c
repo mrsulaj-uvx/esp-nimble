@@ -293,6 +293,9 @@ drops_tmp_cb(struct ble_npl_event *ev)
 int
 ble_monitor_init(void)
 {
+    SYSINIT_ASSERT_ACTIVE();
+    ble_npl_error_t rc;
+
 #if MYNEWT_VAL(BLE_MONITOR_UART)
     struct uart_conf uc = {
         .uc_speed = MYNEWT_VAL(BLE_MONITOR_UART_BAUDRATE),
@@ -337,7 +340,8 @@ ble_monitor_init(void)
     }
 #endif
 
-    ble_npl_mutex_init(&lock);
+    rc = ble_npl_mutex_init(&lock);
+    SYSINIT_PANIC_ASSERT(rc == 0);
 
     return 0;
 }
