@@ -1732,6 +1732,9 @@ ble_att_svr_build_read_group_type_rsp(uint16_t conn_handle,
 
     *att_err = 0;
     *err_handle = start_handle;
+    start_group_handle = 0;
+
+    entry = NULL;
 
     mtu = ble_att_mtu(conn_handle);
 
