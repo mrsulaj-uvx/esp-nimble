@@ -75,9 +75,11 @@ nimble_port_run(void)
 
     while (1) {
         ev = ble_npl_eventq_get(&g_eventq_dflt, BLE_NPL_TIME_FOREVER);
-        ble_npl_event_run(ev);
-        if (ev == &ble_hs_ev_stop) {
-            break;
+        if (ev) {
+            ble_npl_event_run(ev);
+            if (ev == &ble_hs_ev_stop) {
+                break;
+            }
         }
     }
 }
