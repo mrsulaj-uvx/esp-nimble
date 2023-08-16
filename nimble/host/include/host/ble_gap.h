@@ -39,14 +39,24 @@ extern "C" {
 struct hci_le_conn_complete;
 struct hci_conn_update;
 
+#if MYNEWT_VAL(BLE_HIGH_DUTY_ADV_ITVL)
+/** 5 ms. */
+#define BLE_GAP_ADV_FAST_INTERVAL1_MIN      (5 * 1000 / BLE_HCI_ADV_ITVL)
+#else
 /** 30 ms. */
 #define BLE_GAP_ADV_FAST_INTERVAL1_MIN      (30 * 1000 / BLE_HCI_ADV_ITVL)
+#endif
 
 /** 60 ms. */
 #define BLE_GAP_ADV_FAST_INTERVAL1_MAX      (60 * 1000 / BLE_HCI_ADV_ITVL)
 
+#if MYNEWT_VAL(BLE_HIGH_DUTY_ADV_ITVL)
+/** 5 ms. */
+#define BLE_GAP_ADV_FAST_INTERVAL2_MIN      (5 * 1000 / BLE_HCI_ADV_ITVL)
+#else
 /** 100 ms. */
 #define BLE_GAP_ADV_FAST_INTERVAL2_MIN      (100 * 1000 / BLE_HCI_ADV_ITVL)
+#endif
 
 /** 150 ms. */
 #define BLE_GAP_ADV_FAST_INTERVAL2_MAX      (150 * 1000 / BLE_HCI_ADV_ITVL)
