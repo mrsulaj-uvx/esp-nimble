@@ -139,6 +139,7 @@ struct hci_conn_update;
 #define BLE_GAP_EVENT_PERIODIC_SYNC_LOST    22
 #define BLE_GAP_EVENT_SCAN_REQ_RCVD         23
 #define BLE_GAP_EVENT_PERIODIC_TRANSFER     24
+#define BLE_GAP_EVENT_REATTEMPT_COUNT       25
 
 /*** Reason codes for the subscribe GAP event. */
 
@@ -976,6 +977,23 @@ struct ble_gap_event {
             /** Advertiser clock accuracy */
             uint8_t adv_clk_accuracy;
         } periodic_transfer;
+#endif
+
+#if MYNEWT_VAL(BLE_ENABLE_CONN_REATTEMPT)
+	/**
+	 * Represents a event mentioning connection reattempt
+	 * count
+	 *
+	 * Valid for the following event types:
+	 * 	o BLE_GAP_EVENT_REATTEMPT_COUNT
+	 */
+        struct {
+            /* Connection handle */
+	    uint16_t conn_handle;
+
+	    /* Reattempt connection attempt count */
+	    uint8_t count;
+        } reattempt_cnt;
 #endif
     };
 };
