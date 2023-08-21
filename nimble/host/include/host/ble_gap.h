@@ -149,6 +149,7 @@ struct hci_conn_update;
 #define BLE_GAP_EVENT_PATHLOSS_THRESHOLD    25
 #define BLE_GAP_EVENT_TRANSMIT_POWER        26
 #define BLE_GAP_EVENT_SUBRATE_CHANGE        27
+#define BLE_GAP_EVENT_REATTEMPT_COUNT       28
 
 /*** Reason codes for the subscribe GAP event. */
 
@@ -1062,6 +1063,23 @@ struct ble_gap_event {
             /** Supervision Timeout */
             uint16_t supervision_tmo;
         } subrate_change;
+#endif
+
+#if MYNEWT_VAL(BLE_ENABLE_CONN_REATTEMPT)
+	/**
+	 * Represents a event mentioning connection reattempt
+	 * count
+	 *
+	 * Valid for the following event types:
+	 * 	o BLE_GAP_EVENT_REATTEMPT_COUNT
+	 */
+        struct {
+            /* Connection handle */
+	    uint16_t conn_handle;
+
+	    /* Reattempt connection attempt count */
+	    uint8_t count;
+        } reattempt_cnt;
 #endif
     };
 };
