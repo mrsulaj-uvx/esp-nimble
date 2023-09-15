@@ -30,6 +30,7 @@
 #ifndef MYNEWT
 #include "nimble/nimble_port.h"
 #endif
+#include "host/ble_hs_pvcy.h"
 
 #define BLE_HS_HCI_EVT_COUNT                    \
     (MYNEWT_VAL(BLE_HCI_EVT_HI_BUF_COUNT) +     \
@@ -576,6 +577,7 @@ ble_hs_enqueue_hci_event(uint8_t *hci_evt)
 
     ev = os_memblock_get(&ble_hs_hci_ev_pool);
     if (ev && ble_hs_evq->q ) {
+        memset (ev, 0, sizeof *ev);
         ble_npl_event_init(ev, ble_hs_event_rx_hci_ev, hci_evt);
         ble_npl_eventq_put(ble_hs_evq, ev);
     }
@@ -838,4 +840,8 @@ ble_hs_deinit(void)
     ble_hs_flow_stop();
 
     ble_hs_stop_deinit();
+
+#if (MYNEWT_VAL(BLE_HOST_BASED_PRIVACY))
+    ble_hs_resolv_deinit();
+#endif
 }
