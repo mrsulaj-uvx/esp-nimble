@@ -136,6 +136,14 @@ ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
         return rc;
     }
 
+    memset(&key, 0, sizeof key);
+    key.rpa_rec.peer_rpa_addr = *peer_id_addr;
+
+    rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_PEER_ADDR, &key);
+    if (rc != 0) {
+        return rc;
+    }
+
 #if MYNEWT_VAL(BLE_HOST_BASED_PRIVACY)
     struct ble_hs_dev_records *peer_rec =
                               ble_rpa_find_peer_dev_rec(key.sec.peer_addr.val);
@@ -255,6 +263,7 @@ ble_store_util_status_rr(struct ble_store_status_event *event, void *arg)
         switch (event->overflow.obj_type) {
         case BLE_STORE_OBJ_TYPE_OUR_SEC:
         case BLE_STORE_OBJ_TYPE_PEER_SEC:
+        case BLE_STORE_OBJ_TYPE_PEER_ADDR:
             return ble_gap_unpair_oldest_peer();
         case BLE_STORE_OBJ_TYPE_CCCD:
             /* Try unpairing oldest peer except current peer */

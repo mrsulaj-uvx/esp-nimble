@@ -41,7 +41,8 @@
 #define NIMBLE_NVS_CCCD_SEC_KEY                  "cccd_sec"
 #define NIMBLE_NVS_PEER_RECORDS_KEY              "p_dev_rec"
 #define NIMBLE_NVS_NAMESPACE                     "nimble_bond"
-
+#define NIMBLE_NVS_RPA_RECORDS_KEY               "rpa_rec"
+#define NIMBLE_NVS_LOCAL_IRK_KEY                 "local_irk"
 static const char *TAG = "NIMBLE_NVS";
 
 /*****************************************************************************
@@ -58,7 +59,11 @@ get_nvs_key_string(int obj_type, int index, char *key_string)
             sprintf(key_string, "%s_%d", NIMBLE_NVS_PEER_SEC_KEY, index);
         } else if (obj_type == BLE_STORE_OBJ_TYPE_OUR_SEC) {
             sprintf(key_string, "%s_%d", NIMBLE_NVS_OUR_SEC_KEY, index);
-        } else {
+        }  else if (obj_type == BLE_STORE_OBJ_TYPE_PEER_ADDR){
+            sprintf(key_string, "%s_%d", NIMBLE_NVS_RPA_RECORDS_KEY, index);
+        }  else if (obj_type == BLE_STORE_OBJ_TYPE_LOCAL_IRK) {
+            sprintf(key_string, "%s_%d", NIMBLE_NVS_LOCAL_IRK_KEY, index);
+        }  else {
             sprintf(key_string, "%s_%d", NIMBLE_NVS_CCCD_SEC_KEY, index);
         }
     }
@@ -156,6 +161,14 @@ get_nvs_db_value(int obj_type, char *key_string, union ble_store_value *val)
     if (obj_type == BLE_STORE_OBJ_TYPE_CCCD) {
         err = nvs_get_blob(nimble_handle, key_string, &val->cccd,
                            &required_size);
+
+    } else if (obj_type == BLE_STORE_OBJ_TYPE_PEER_ADDR) {
+         err = nvs_get_blob(nimble_handle, key_string, &val->rpa_rec,
+                           &required_size);
+
+    } else if (obj_type == BLE_STORE_OBJ_TYPE_LOCAL_IRK) {
+         err = nvs_get_blob (nimble_handle, key_string, &val->local_irk,
+                           &required_size);
     } else {
         err = nvs_get_blob(nimble_handle, key_string, &val->sec,
                            &required_size);
@@ -222,6 +235,15 @@ get_nvs_db_attribute(int obj_type, bool empty, void *value, int num_value)
                     if (obj_type != BLE_STORE_OBJ_TYPE_CCCD) {
                         err = get_nvs_matching_index(&cur.sec, value, num_value,
                                                      sizeof(struct ble_store_value_sec));
+
+                    } else if (obj_type == BLE_STORE_OBJ_TYPE_PEER_ADDR){
+                        err = get_nvs_matching_index(&cur.rpa_rec,value,num_value,
+                                                     sizeof(struct ble_store_value_rpa_rec));
+
+                    } else if (obj_type == BLE_STORE_OBJ_TYPE_LOCAL_IRK) {
+                        err = get_nvs_matching_index(&cur.local_irk, value, num_value,
+                                                     sizeof(struct ble_store_value_local_irk));
+
                     } else {
                         err = get_nvs_matching_index(&cur.cccd, value, num_value,
                                                      sizeof(struct ble_store_value_cccd));
@@ -347,6 +369,14 @@ ble_store_nvs_write(int obj_type, const union ble_store_value *val)
     if (obj_type == BLE_STORE_OBJ_TYPE_CCCD) {
         return ble_nvs_write_key_value(key_string, &val->cccd, sizeof(struct
                                        ble_store_value_cccd));
+    } else if (obj_type == BLE_STORE_OBJ_TYPE_PEER_ADDR) {
+        return ble_nvs_write_key_value(key_string, &val->rpa_rec, sizeof(struct
+                                       ble_store_value_rpa_rec));
+
+    } else if (obj_type == BLE_STORE_OBJ_TYPE_LOCAL_IRK) {
+        return ble_nvs_write_key_value(key_string, &val->local_irk, sizeof(struct
+                                       ble_store_value_local_irk));
+
     } else {
         return ble_nvs_write_key_value(key_string, &val->sec, sizeof(struct
                                        ble_store_value_sec));
@@ -431,6 +461,19 @@ populate_db_from_nvs(int obj_type, void *dst, int *db_num)
                 memcpy(db_item, &cur.cccd, sizeof(struct ble_store_value_cccd));
                 db_item += sizeof(struct ble_store_value_cccd);
                 (*db_num)++;
+
+            } else if (obj_type == BLE_STORE_OBJ_TYPE_PEER_ADDR) {
+                       ESP_LOGD(TAG, "RPA_REC in RAM is filled up from NVS index = %d", i);
+                       memcpy(db_item, &cur.rpa_rec, sizeof(struct ble_store_value_rpa_rec));
+                       db_item += sizeof(struct ble_store_value_rpa_rec);
+                       (*db_num)++;
+
+            } else if (obj_type == BLE_STORE_OBJ_TYPE_LOCAL_IRK) {
+                       ESP_LOGD(TAG, "Local IRK in RAM is filled up from NVS index = %d", i);
+                       memcpy(db_item, &cur.local_irk, sizeof(struct ble_store_value_local_irk));
+                       db_item += sizeof(struct ble_store_value_local_irk);
+                       (*db_num)++;
+
             } else {
                 ESP_LOGD(TAG, "KEY in RAM is filled up from NVS index = %d", i);
                 memcpy(db_item, &cur.sec, sizeof(struct ble_store_value_sec));
@@ -475,6 +518,24 @@ ble_nvs_restore_sec_keys(void)
     }
     ESP_LOGD(TAG, "ble_store_config_cccds restored %d bonds",
              ble_store_config_num_cccds);
+
+    err = populate_db_from_nvs(BLE_STORE_OBJ_TYPE_PEER_ADDR, ble_store_config_rpa_recs,
+                               &ble_store_config_num_rpa_recs);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "NVS operation failed for 'RPA_REC'");
+        return err;
+    }
+    ESP_LOGD(TAG, "ble_store_config_rpa_recs restored %d bonds",
+             ble_store_config_num_rpa_recs);
+
+    err = populate_db_from_nvs(BLE_STORE_OBJ_TYPE_LOCAL_IRK, ble_store_config_local_irks,
+                       &ble_store_config_num_local_irks);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "NVS operation failed for 'Local IRK'");
+        return err;
+    }
+    ESP_LOGD(TAG, "ble_store_config_local_irks restored %d irks",
+             ble_store_config_num_local_irks);
 
     return 0;
 }
@@ -528,6 +589,64 @@ int ble_store_config_persist_cccds(void)
         }
         ESP_LOGD(TAG, "Deleting CCCD, nvs idx = %d", nvs_idx);
         return ble_nvs_delete_value(BLE_STORE_OBJ_TYPE_CCCD, nvs_idx);
+    }
+    return 0;
+}
+
+int ble_store_config_persist_rpa_recs(void)
+{
+    int nvs_count, nvs_idx;
+    union ble_store_value val;
+    nvs_count = get_nvs_db_attribute(BLE_STORE_OBJ_TYPE_PEER_ADDR, 0, NULL, 0);
+     if (nvs_count == -1) {
+        ESP_LOGE(TAG, "NVS operation failed while persisting RPA_RECS");
+        return BLE_HS_ESTORE_FAIL;
+    } 
+    if (nvs_count < ble_store_config_num_rpa_recs) {
+        /* NVS db count less than RAM count, write operation */
+        ESP_LOGD(TAG, "Persisting RPA_RECS value in NVS...");
+        val.rpa_rec = ble_store_config_rpa_recs[ble_store_config_num_rpa_recs - 1];
+        return ble_store_nvs_write(BLE_STORE_OBJ_TYPE_PEER_ADDR, &val);
+    } else if (nvs_count > ble_store_config_num_rpa_recs) {
+        /* NVS db count more than RAM count, delete operation */
+        nvs_idx = get_nvs_db_attribute(BLE_STORE_OBJ_TYPE_PEER_ADDR, 0,
+                                       ble_store_config_rpa_recs, ble_store_config_num_rpa_recs);
+        if (nvs_idx == -1) {
+            ESP_LOGE(TAG, "NVS delete operation failed for RPA_REC");
+            return BLE_HS_ESTORE_FAIL;
+        }
+        ESP_LOGD(TAG, "Deleting RPA_REC, nvs idx = %d", nvs_idx);
+        return ble_nvs_delete_value(BLE_STORE_OBJ_TYPE_PEER_ADDR, nvs_idx);
+    }
+    return 0;
+}
+
+int ble_store_config_persist_local_irk(void)
+{
+    int nvs_count, nvs_idx;
+    union ble_store_value val;
+
+    nvs_count = get_nvs_db_attribute(BLE_STORE_OBJ_TYPE_LOCAL_IRK, 0, NULL, 0);
+    if (nvs_count == -1) {
+        ESP_LOGE(TAG, "NVS operation failed while persisting EAD");
+        return BLE_HS_ESTORE_FAIL;
+    }
+
+    if (nvs_count < ble_store_config_num_local_irks) {
+        /* NVS db count less than RAM count, write operation */
+        ESP_LOGD(TAG, "Persisting Local IRK value in NVS...");
+        val.local_irk = ble_store_config_local_irks[ble_store_config_num_local_irks-1];
+        return ble_store_nvs_write(BLE_STORE_OBJ_TYPE_LOCAL_IRK, &val);
+    } else if (nvs_count > ble_store_config_num_local_irks) {
+        /* NVS db count more than RAM count, delete operation */
+        nvs_idx = get_nvs_db_attribute(BLE_STORE_OBJ_TYPE_LOCAL_IRK, 0,
+                                       ble_store_config_local_irks, ble_store_config_num_local_irks);
+        if (nvs_idx == -1) {
+            ESP_LOGE(TAG, "NVS delete operation failed for Local IRK");
+            return BLE_HS_ESTORE_FAIL;
+        }
+        ESP_LOGD(TAG, "Deleting Local IRK, nvs idx = %d", nvs_idx);
+        return ble_nvs_delete_value(BLE_STORE_OBJ_TYPE_LOCAL_IRK, nvs_idx);
     }
     return 0;
 }
