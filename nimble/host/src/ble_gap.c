@@ -5937,8 +5937,14 @@ ble_gap_encryption_initiate(uint16_t conn_handle,
 int
 ble_gap_unpair(const ble_addr_t *peer_addr)
 {
+#if NIMBLE_BLE_SM
+    int rc;
+    int ltk_rc = 0;
+    int irk_rc = 0;
     struct ble_hs_conn *conn;
-
+    union ble_store_value value;
+    union ble_store_key key;
+    ble_addr_t *new_addr = (ble_addr_t *) peer_addr;
     if (!ble_hs_is_enabled()) {
        return BLE_HS_EDISABLED;
     }
@@ -5956,10 +5962,54 @@ ble_gap_unpair(const ble_addr_t *peer_addr)
 
     ble_hs_unlock();
 
-    ble_hs_pvcy_remove_entry(peer_addr->type,
-                             peer_addr->val);
+    memset(&key,0,sizeof(key));
+    key.rpa_rec.peer_rpa_addr = *peer_addr;
 
-    return ble_store_util_delete_peer(peer_addr);
+    rc = ble_store_read(BLE_STORE_OBJ_TYPE_PEER_ADDR, &key, &value);
+
+    if (!rc) {
+        new_addr = &(value.rpa_rec.peer_addr);
+    }
+
+    memset(&key, 0, sizeof(key));
+    key.sec.peer_addr = *new_addr;
+
+    rc = ble_store_read(BLE_STORE_OBJ_TYPE_PEER_SEC, &key, &value);
+
+    // Checking if the device is in ble_store
+    if (!rc) {
+        if (value.sec.irk_present) {
+            // Delete the IRK as it is Distributed
+           irk_rc = ble_hs_pvcy_remove_entry(key.sec.peer_addr.type,
+                                key.sec.peer_addr.val);
+            if (irk_rc != 0) {
+                BLE_HS_LOG(ERROR, "Error while removing IRK\n");
+            }
+        }
+
+        if (value.sec.ltk_present || value.sec.irk_present) {
+            // Delete the Peer record from store as LTK is present
+            ltk_rc = ble_store_util_delete_peer(&key.sec.peer_addr);
+            if (ltk_rc != 0) {
+                BLE_HS_LOG(ERROR, "Error while removing LTK\n");
+            }
+        }
+    }
+    else {
+         rc = ble_store_read(BLE_STORE_OBJ_TYPE_OUR_SEC, &key, &value);
+         if (!rc) {
+             ble_store_util_delete_peer(&key.sec.peer_addr);
+         }
+         else {
+              BLE_HS_LOG(ERROR,"No record found for the given address in ble store");
+              return rc;
+         }
+    }
+
+    return 0;
+#else
+    return BLE_HS_ENOTSUP;
+#endif
 }
 
 int

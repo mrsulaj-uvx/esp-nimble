@@ -31,7 +31,8 @@ extern "C" {
 #define BLE_STORE_OBJ_TYPE_PEER_SEC          2
 #define BLE_STORE_OBJ_TYPE_CCCD              3
 #define BLE_STORE_OBJ_TYPE_PEER_DEV_REC      4
-
+#define BLE_STORE_OBJ_TYPE_PEER_ADDR         6
+#define BLE_STORE_OBJ_TYPE_LOCAL_IRK         7
 /** Failed to persist record; insufficient storage capacity. */
 #define BLE_STORE_EVENT_OVERFLOW        1
 
@@ -120,6 +121,26 @@ struct ble_store_value_cccd {
     uint16_t flags;
     unsigned value_changed:1;
 };
+struct ble_store_key_rpa_rec{
+    ble_addr_t peer_rpa_addr;
+    uint8_t idx;
+};
+struct ble_store_value_rpa_rec{
+    ble_addr_t peer_rpa_addr;
+    ble_addr_t peer_addr;
+};
+
+struct ble_store_key_local_irk {
+    ble_addr_t addr;
+
+    uint8_t idx;
+};
+struct ble_store_value_local_irk {
+     ble_addr_t addr;
+
+     uint8_t irk[16];
+};
+
 
 /**
  * Used as a key for store lookups.  This union must be accompanied by an
@@ -128,6 +149,8 @@ struct ble_store_value_cccd {
 union ble_store_key {
     struct ble_store_key_sec sec;
     struct ble_store_key_cccd cccd;
+    struct ble_store_key_rpa_rec rpa_rec;
+    struct ble_store_key_local_irk local_irk;
 };
 
 /**
@@ -137,6 +160,8 @@ union ble_store_key {
 union ble_store_value {
     struct ble_store_value_sec sec;
     struct ble_store_value_cccd cccd;
+    struct ble_store_value_rpa_rec rpa_rec;
+    struct ble_store_value_local_irk local_irk;
 };
 
 struct ble_store_status_event {
@@ -271,6 +296,21 @@ void ble_store_key_from_value_sec(struct ble_store_key_sec *out_key,
                                   const struct ble_store_value_sec *value);
 void ble_store_key_from_value_cccd(struct ble_store_key_cccd *out_key,
                                    const struct ble_store_value_cccd *value);
+
+int ble_store_read_rpa_rec(const struct ble_store_key_rpa_rec *key,
+                       struct ble_store_value_rpa_rec *out_value);
+int ble_store_write_rpa_rec(const struct ble_store_value_rpa_rec *value);
+int ble_store_delete_rpa_rec(const struct ble_store_key_rpa_rec *key);
+void ble_store_key_from_value_rpa_rec(struct ble_store_key_rpa_rec *out_key,
+                                  const struct ble_store_value_rpa_rec *value);
+
+int ble_store_read_local_irk(const struct ble_store_key_local_irk *key,
+                       struct ble_store_value_local_irk *out_value);
+int ble_store_write_local_irk(const struct ble_store_value_local_irk *value);
+int ble_store_delete_local_irk(const struct ble_store_key_local_irk *key);
+void ble_store_key_from_value_local_irk(struct ble_store_key_local_irk *out_key,
+                                  const struct ble_store_value_local_irk *value);
+
 
 void ble_store_key_from_value(int obj_type,
                               union ble_store_key *out_key,
