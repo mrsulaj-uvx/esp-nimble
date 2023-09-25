@@ -32,13 +32,6 @@
 #endif
 #include "soc/soc_caps.h"
 
-#if SOC_ESP_NIMBLE_CONTROLLER
-#if CONFIG_SW_COEXIST_ENABLE
-#include "esp_coexist_internal.h"
-#endif
-#endif
-
-
 #include "nimble/ble_hci_trans.h"
 
 #include "esp_intr_alloc.h"
