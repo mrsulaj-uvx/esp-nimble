@@ -66,6 +66,10 @@ static ble_hs_hci_evt_fn ble_hs_hci_evt_enc_key_refresh;
 #endif
 static ble_hs_hci_evt_fn ble_hs_hci_evt_le_meta;
 
+static ble_hs_hci_evt_fn ble_hs_hci_evt_rx_test;
+static ble_hs_hci_evt_fn ble_hs_hci_evt_tx_test;
+static ble_hs_hci_evt_fn ble_hs_hci_evt_end_test;
+
 typedef int ble_hs_hci_evt_le_fn(uint8_t subevent, const void *data,
                                  unsigned int len);
 static ble_hs_hci_evt_le_fn ble_hs_hci_evt_le_adv_rpt;
@@ -120,6 +124,11 @@ static const struct ble_hs_hci_evt_dispatch_entry ble_hs_hci_evt_dispatch[] = {
     { BLE_HCI_EVCODE_ENC_KEY_REFRESH, ble_hs_hci_evt_enc_key_refresh },
 #endif
     { BLE_HCI_EVCODE_HW_ERROR, ble_hs_hci_evt_hw_error },
+    { BLE_HCI_OCF_LE_RX_TEST, ble_hs_hci_evt_rx_test },
+    { BLE_HCI_OCF_LE_TX_TEST, ble_hs_hci_evt_tx_test },
+    { BLE_HCI_OCF_LE_TEST_END, ble_hs_hci_evt_end_test },
+    { BLE_HCI_OCF_LE_RX_TEST_V2, ble_hs_hci_evt_rx_test },
+    { BLE_HCI_OCF_LE_TX_TEST_V2, ble_hs_hci_evt_tx_test },
 };
 
 #define BLE_HS_HCI_EVT_DISPATCH_SZ \
@@ -380,6 +389,30 @@ ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const void *data,
 
     /* If any transmissions have stalled, wake them up now. */
     ble_hs_wakeup_tx();
+
+    return 0;
+}
+
+static int
+ble_hs_hci_evt_rx_test(uint8_t event_code, const void *data, unsigned int len)
+{
+    ble_gap_rx_test_evt(data, len);
+
+    return 0;
+}
+
+static int
+ble_hs_hci_evt_tx_test(uint8_t event_code, const void *data, unsigned int len)
+{
+    ble_gap_tx_test_evt(data, len);
+
+    return 0;
+}
+
+static int
+ble_hs_hci_evt_end_test(uint8_t event_code, const void *data, unsigned int len)
+{
+    ble_gap_end_test_evt(data, len);
 
     return 0;
 }
@@ -1022,8 +1055,15 @@ ble_hs_hci_evt_process(const struct ble_hci_ev *ev)
     /* Count events received */
     STATS_INC(ble_hs_stats, hci_event);
 
+    if(ev->opcode == BLE_HCI_EVCODE_COMMAND_COMPLETE) {
+        /* Check if this Command complete has a parsable opcode */
+         struct ble_hci_ev_command_complete *cmd_complete = (void *) ev->data;
+	 entry = ble_hs_hci_evt_dispatch_find(cmd_complete->opcode);
+    }
+    else {
+         entry = ble_hs_hci_evt_dispatch_find(ev->opcode);
+    }
 
-    entry = ble_hs_hci_evt_dispatch_find(ev->opcode);
     if (entry == NULL) {
         STATS_INC(ble_hs_stats, hci_unknown_event);
         rc = BLE_HS_ENOTSUP;

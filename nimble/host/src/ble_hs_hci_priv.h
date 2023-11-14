@@ -119,6 +119,13 @@ int ble_hs_hci_acl_tx(struct ble_hs_conn *conn, struct os_mbuf **om);
 int ble_hs_hci_frag_num_mbufs(void);
 int ble_hs_hci_frag_num_mbufs_free(void);
 
+int ble_hs_hci_dtm_tx_start(uint8_t tx_chan, uint8_t test_data_len, uint8_t payload);
+int ble_hs_hci_dtm_rx_start(uint8_t rx_chan);
+int ble_hs_hci_dtm_enh_rx_start(uint8_t rx_chan, uint8_t index, uint8_t phy);
+int ble_hs_hci_dtm_enh_tx_start(uint8_t tx_chan, uint8_t test_data_len,
+		                uint8_t payload, uint8_t phy);
+int ble_hs_hci_dtm_stop(void);
+
 #ifdef __cplusplus
 }
 #endif

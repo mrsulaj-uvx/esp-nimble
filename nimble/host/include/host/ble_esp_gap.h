@@ -43,6 +43,10 @@ int ble_gap_clear_legacy_adv(void);
 int ble_gap_duplicate_exception_list(uint8_t subcode, uint8_t type, uint8_t *value, void *cb);
 #endif
 
+void ble_gap_rx_test_evt(const void *buf, uint8_t len);
+void ble_gap_tx_test_evt(const void *buf, uint8_t len);
+void ble_gap_end_test_evt(const void *buf, uint8_t len);
+
 #ifdef __cplusplus
 }
 #endif
