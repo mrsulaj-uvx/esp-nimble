@@ -6925,3 +6925,11 @@ ble_gap_set_transmit_power_reporting_enable(uint16_t conn_handle,
     return BLE_HS_ENOTSUP;
 #endif
 }
+
+#if MYNEWT_VAL(BLE_HCI_VS)
+int ble_gap_clear_legacy_adv(void)
+{
+     return ble_hs_hci_send_vs_cmd(BLE_HCI_OCF_VS_LEGACY_ADV_CLEAR,
+		            NULL, 0, NULL, 0);
+}
+#endif
