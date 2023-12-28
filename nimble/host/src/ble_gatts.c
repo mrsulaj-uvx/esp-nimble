@@ -1527,7 +1527,7 @@ ble_gatts_chr_updated(uint16_t chr_val_handle)
          * Consider using a "foreach" function to walk the connection list.
          */
         conn = ble_hs_conn_find_by_idx(i);
-        if (conn == NULL) {
+        if (conn == NULL || conn->bhc_gatt_svr.clt_cfgs == NULL) {
             break;
         }
 
