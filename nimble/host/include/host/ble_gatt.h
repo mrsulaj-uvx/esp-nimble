@@ -891,6 +891,11 @@ int ble_gatts_start(void);
  */
 void ble_gatts_stop(void);
 
+/**
+ *  Returns the current number of configured characteristics
+ */
+int ble_gatts_get_cfgable_chrs(void);
+
 #ifdef __cplusplus
 }
 #endif

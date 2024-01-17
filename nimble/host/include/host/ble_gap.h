@@ -31,6 +31,7 @@
 #include "host/ble_hs.h"
 #include "host/ble_hs_adv.h"
 #include "syscfg/syscfg.h"
+#include "host/ble_esp_gap.h"
 
 #ifdef __cplusplus
 extern "C" {
