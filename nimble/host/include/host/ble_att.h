@@ -207,6 +207,7 @@ struct os_mbuf;
 
 /** Write Command. */
 #define BLE_ATT_OP_WRITE_CMD                0x52
+#define BLE_ATT_OP_SIGNED_WRITE_CMD         0xD2
 
 /** @} */
 
