@@ -32,6 +32,23 @@ typedef enum gap_status gap_status_t;
  */
 int ble_gap_host_check_status(void);
 
+/**
+ * Authorizes or deauthorizes a BLE device for a connection.
+ *
+ * This function updates the security flags of a BLE connection to authorize or
+ * deauthorize a device for the specified connection.
+ *
+ * @param conn_handle           The handle corresponding to the connection to
+ *                              authorize.
+ * @param authorized            Authorized the device or not.
+ *
+ * @return                      0 on success;
+ *                              BLE_HS_ENOTCONN if the connection handle is not found.
+ *                              BLE_HS_EAUTHOR if the device is not authenticated before authorization.
+ */
+int
+ble_gap_dev_authorization(uint16_t conn_handle, bool authorized);
+
 #ifdef __cplusplus
 }
 #endif
