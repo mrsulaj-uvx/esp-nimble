@@ -50,6 +50,10 @@ extern int ble_store_config_num_local_irks;
 int ble_store_config_persist_our_secs(void);
 int ble_store_config_persist_peer_secs(void);
 int ble_store_config_persist_cccds(void);
+#if MYNEWT_VAL(BLE_STORE_MAX_BONDS)
+int ble_restore_our_sec_nvs(void);
+int ble_restore_peer_sec_nvs(void);
+#endif
 int ble_store_config_persist_rpa_recs(void);
 int ble_store_config_persist_local_irk(void);
 void ble_store_config_conf_init(void);
