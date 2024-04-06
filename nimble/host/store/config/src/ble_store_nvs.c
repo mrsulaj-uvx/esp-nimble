@@ -497,6 +497,7 @@ ble_nvs_restore_sec_keys(void)
     extern uint16_t ble_store_config_peer_bond_count;
     extern int ble_store_config_compare_bond_count(const void *a, const void *b);
 
+#if MYNEWT_VAL(BLE_STORE_MAX_BONDS)
     err = populate_db_from_nvs(BLE_STORE_OBJ_TYPE_OUR_SEC, ble_store_config_our_secs,
                                &ble_store_config_num_our_secs);
     if (err != ESP_OK) {
@@ -534,7 +535,9 @@ ble_nvs_restore_sec_keys(void)
 
     ESP_LOGD(TAG, "ble_store_config_peer_secs restored %d bonds",
              ble_store_config_num_peer_secs);
+#endif
 
+#if MYNEWT_VAL(BLE_STORE_MAX_CCCDS)
     err = populate_db_from_nvs(BLE_STORE_OBJ_TYPE_CCCD, ble_store_config_cccds,
                                &ble_store_config_num_cccds);
     if (err != ESP_OK) {
@@ -543,6 +546,7 @@ ble_nvs_restore_sec_keys(void)
     }
     ESP_LOGD(TAG, "ble_store_config_cccds restored %d bonds",
              ble_store_config_num_cccds);
+#endif
 
     err = populate_db_from_nvs(BLE_STORE_OBJ_TYPE_PEER_ADDR, ble_store_config_rpa_recs,
                                &ble_store_config_num_rpa_recs);
@@ -587,6 +591,7 @@ ble_nvs_restore_peer_records(void)
 }
 #endif
 
+#if MYNEWT_VAL(BLE_STORE_MAX_CCCDS)
 int ble_store_config_persist_cccds(void)
 {
     int nvs_count, nvs_idx;
@@ -617,6 +622,7 @@ int ble_store_config_persist_cccds(void)
     }
     return 0;
 }
+#endif
 
 int ble_store_config_persist_rpa_recs(void)
 {
