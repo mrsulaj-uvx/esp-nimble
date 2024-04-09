@@ -1128,7 +1128,7 @@ struct ble_gap_event {
 	     * Valid only for BLE_GAP_DTM_END_EVT
 	     * shall be 0 for a transmitter.
 	     */
-            uint8_t num_pkt;
+            uint16_t num_pkt;
 	} dtm_state;
 
 #if MYNEWT_VAL(BLE_HCI_VS)
